@@ -1,0 +1,6 @@
+base_url: "http://localhost:8080/"
+redis:
+  MaxIdle: 10
+  MaxActive: 100
+  Port: 6379
+  URL: "192.168.1.25"
