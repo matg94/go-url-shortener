@@ -12,7 +12,6 @@ import (
 type RedisConnectionInterface interface {
 	GET(key string) (string, error)
 	SET(key, value string) error
-	DEL(keys ...string) error
 }
 
 var ErrSomeRedisError error = errors.New("some redis error")
@@ -28,27 +27,16 @@ func CreateRedisConnectionPool(redisConfig *config.RedisConfig) *RedisConnection
 		Dial: func() (redis.Conn, error) {
 			var c redis.Conn
 			var err error
-			if redisConfig.Password == "" {
-				c, err = redis.Dial(
-					"tcp",
-					fmt.Sprintf(
-						"%s:%d",
-						redisConfig.URL,
-						redisConfig.Port,
-					),
-				)
-			} else {
-				c, err = redis.Dial(
-					"tcp",
-					fmt.Sprintf(
-						"%s:%d",
-						redisConfig.URL,
-						redisConfig.Port,
-					),
-					redis.DialPassword(redisConfig.Password),
-					redis.DialUseTLS(true),
-				)
-			}
+			c, err = redis.Dial(
+				"tcp",
+				fmt.Sprintf(
+					"%s:%d",
+					redisConfig.URL,
+					redisConfig.Port,
+				),
+				redis.DialPassword(redisConfig.Password),
+				redis.DialUseTLS(true),
+			)
 			if err != nil {
 				log.Fatal(err.Error())
 			}
@@ -65,9 +53,5 @@ func (r *RedisConnection) GET(key string) (string, error) {
 }
 
 func (r *RedisConnection) SET(key, value string) error {
-	return nil
-}
-
-func (r *RedisConnection) DEL(key string) error {
 	return nil
 }
