@@ -12,7 +12,7 @@ type URLRepoInterface interface {
 }
 
 type URLRepo struct {
-	redisConn redis.RedisConnectionInterface
+	RedisConn redis.RedisConnectionInterface
 }
 
 func (repo *URLRepo) StoreURL(shortURL, longURL string, hits uint) error {
@@ -24,11 +24,11 @@ func (repo *URLRepo) StoreURL(shortURL, longURL string, hits uint) error {
 	if err != nil {
 		return err
 	}
-	return repo.redisConn.SET(shortURL, url_json)
+	return repo.RedisConn.SET(shortURL, url_json)
 }
 
 func (repo *URLRepo) GetURL(shortURL string) (models.URL, error) {
-	url_data, err := repo.redisConn.GET(shortURL)
+	url_data, err := repo.RedisConn.GET(shortURL)
 	if err != nil || url_data == "" {
 		return models.URL{}, err // Should return an error if not found that can be interpreted further up
 	}

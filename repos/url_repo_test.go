@@ -15,7 +15,7 @@ func TestStoreURL(t *testing.T) {
 	redisMock := &redis.RedisConnectionMock{}
 
 	repo := &URLRepo{
-		redisConn: redisMock,
+		RedisConn: redisMock,
 	}
 
 	err := repo.StoreURL(shortURL, longURL, hits)

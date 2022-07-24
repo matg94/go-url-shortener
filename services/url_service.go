@@ -6,7 +6,7 @@ import (
 	"github.com/matg94/go-url-shortener/util"
 )
 
-func ShortenURL(URLRepo repos.URLRepo, longURL string, hashLength int) (string, error) {
+func ShortenURL(URLRepo *repos.URLRepo, longURL string, hashLength int) (string, error) {
 	hash := util.HashString(longURL, hashLength)
 
 	url, err := URLRepo.GetURL(hash)
@@ -24,7 +24,7 @@ func ShortenURL(URLRepo repos.URLRepo, longURL string, hashLength int) (string, 
 	return hash, err
 }
 
-func ElongateURL(URLRepo repos.URLRepo, shortURL string) (string, error) {
+func ElongateURL(URLRepo *repos.URLRepo, shortURL string) (string, error) {
 	url, err := URLRepo.GetURL(shortURL)
 	if (url == models.URL{}) || err != nil {
 		return "", err

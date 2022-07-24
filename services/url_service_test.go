@@ -4,16 +4,22 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/matg94/go-url-shortener/models"
 	"github.com/matg94/go-url-shortener/redis"
+	"github.com/matg94/go-url-shortener/repos"
 )
 
 func TestShortenURL(t *testing.T) {
 	longURL := "test"
 	hashLength := 10
-	redisConn := &redis.RedisConnectionMock{}
-	redisConn.ReturnValue = ""
+	redisMock := &redis.RedisConnectionMock{}
+	redisMock.ReturnValue = ""
 
-	shortened, err := ShortenURL(redisConn, longURL, hashLength)
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	shortened, err := ShortenURL(url_repo, longURL, hashLength)
 	if err != nil {
 		t.Log("expected no errors but got", err)
 		t.Fail()
@@ -28,12 +34,16 @@ func TestShortenURL(t *testing.T) {
 func TestShortenURLRedisErrorGet(t *testing.T) {
 	longURL := "test"
 	hashLength := 10
-	redisConn := &redis.RedisConnectionMock{}
-	redisConn.ReturnValue = ""
+	redisMock := &redis.RedisConnectionMock{}
+	redisMock.ReturnValue = ""
 	redisError := fmt.Errorf("fail")
-	redisConn.ReturnErrorGet = redisError
+	redisMock.ReturnErrorGet = redisError
 
-	shortened, err := ShortenURL(redisConn, longURL, hashLength)
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	shortened, err := ShortenURL(url_repo, longURL, hashLength)
 	if err != redisError {
 		t.Log("expected error to be nil but got", err)
 		t.Fail()
@@ -48,12 +58,16 @@ func TestShortenURLRedisErrorGet(t *testing.T) {
 func TestShortenURLRedisErrorSet(t *testing.T) {
 	longURL := "test"
 	hashLength := 10
-	redisConn := &redis.RedisConnectionMock{}
-	redisConn.ReturnValue = ""
+	redisMock := &redis.RedisConnectionMock{}
+	redisMock.ReturnValue = ""
 	redisError := fmt.Errorf("fail")
-	redisConn.ReturnErrorSet = redisError
+	redisMock.ReturnErrorSet = redisError
 
-	shortened, err := ShortenURL(redisConn, longURL, hashLength)
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	shortened, err := ShortenURL(url_repo, longURL, hashLength)
 	if err != redisError {
 		t.Log("expected error to be nil but got", err)
 		t.Fail()
@@ -67,10 +81,18 @@ func TestShortenURLRedisErrorSet(t *testing.T) {
 
 func TestElongateURL(t *testing.T) {
 	shortURL := "test"
-	redisConn := &redis.RedisConnectionMock{}
-	redisConn.ReturnValue = "test-long"
+	redisMock := &redis.RedisConnectionMock{}
+	longURL := &models.URL{
+		LongURL: "test-long",
+		Hits:    5,
+	}
+	redisMock.ReturnValue, _ = longURL.ToJSON()
 
-	url, err := ElongateURL(redisConn, shortURL)
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	url, err := ElongateURL(url_repo, shortURL)
 
 	if err != nil {
 		t.Log("expected error to be nil but got", err)
@@ -83,14 +105,18 @@ func TestElongateURL(t *testing.T) {
 	}
 }
 
-func TestElongateURLRedisError(t *testing.T) {
+func TestElongateURLRedisErrorGet(t *testing.T) {
 	shortURL := "test"
-	redisConn := &redis.RedisConnectionMock{}
-	redisConn.ReturnValue = "test-long"
+	redisMock := &redis.RedisConnectionMock{}
+	redisMock.ReturnValue = "test-long"
 	redisError := fmt.Errorf("fail")
-	redisConn.ReturnErrorGet = redisError
+	redisMock.ReturnErrorGet = redisError
 
-	url, err := ElongateURL(redisConn, shortURL)
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	url, err := ElongateURL(url_repo, shortURL)
 
 	if err != redisError {
 		t.Log("expected error to be 'fail' but got", err)
@@ -101,4 +127,8 @@ func TestElongateURLRedisError(t *testing.T) {
 		t.Log("expected url to be empty but got", url)
 		t.Fail()
 	}
+}
+
+func TestElongateURLRedisErrorIncrement(t *testing.T) {
+
 }
