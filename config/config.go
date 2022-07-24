@@ -16,8 +16,9 @@ type RedisConfig struct {
 }
 
 type AppConfig struct {
-	BaseUrl string      `yaml:"base_url"`
-	Redis   RedisConfig `yaml:"redis"`
+	BaseUrl    string      `yaml:"base_url"`
+	HashLength int         `yaml:"hash_length"`
+	Redis      RedisConfig `yaml:"redis"`
 }
 
 func ReadConfigFile(filepath string) ([]byte, error) {

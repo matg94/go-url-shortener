@@ -1,4 +1,5 @@
 base_url: "http://localhost:8080/"
+hash_length: 10
 redis:
   MaxIdle: 10
   MaxActive: 100

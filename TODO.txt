@@ -1,2 +1,3 @@
 Add a constructor to redis_mock to better create mocks
+    switch url_repo_tests to use constructor
 Change remo store url to take a models.url object rather than fields
