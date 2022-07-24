@@ -10,10 +10,15 @@ import (
 )
 
 func TestShortenURL(t *testing.T) {
+
+	redisMock := redis.CreateRedisMock(
+		nil,
+		nil,
+		"",
+	)
+
 	longURL := "test"
 	hashLength := 10
-	redisMock := &redis.RedisConnectionMock{}
-	redisMock.ReturnValue = ""
 
 	url_repo := &repos.URLRepo{
 		RedisConn: redisMock,

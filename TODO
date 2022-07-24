@@ -1,0 +1,2 @@
+Add a constructor to redis_mock to better create mocks
+Change remo store url to take a models.url object rather than fields

@@ -15,6 +15,7 @@ type URLRepo struct {
 	RedisConn redis.RedisConnectionInterface
 }
 
+// Should this be changed to take URL model as a param?
 func (repo *URLRepo) StoreURL(shortURL, longURL string, hits uint) error {
 	url := models.URL{
 		LongURL: longURL,
@@ -29,7 +30,7 @@ func (repo *URLRepo) StoreURL(shortURL, longURL string, hits uint) error {
 
 func (repo *URLRepo) GetURL(shortURL string) (models.URL, error) {
 	url_data, err := repo.RedisConn.GET(shortURL)
-	if err != nil || url_data == "" {
+	if err != nil {
 		return models.URL{}, err // Should return an error if not found that can be interpreted further up
 	}
 	url, err := models.FromJSON(url_data)
@@ -37,5 +38,13 @@ func (repo *URLRepo) GetURL(shortURL string) (models.URL, error) {
 }
 
 func (repo *URLRepo) IncrementHits(shortURL string) error {
+	url, err := repo.GetURL(shortURL)
+	if err != nil {
+		return err
+	}
+	err = repo.StoreURL(shortURL, url.LongURL, url.Hits+1)
+	if err != nil {
+		return err
+	}
 	return nil
 }

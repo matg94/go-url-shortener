@@ -14,7 +14,7 @@ type RedisConnectionInterface interface {
 	SET(key, value string) error
 }
 
-var ErrSomeRedisError error = errors.New("some redis error")
+var ErrRedisValueNotFound error = errors.New("short url key not found")
 
 type RedisConnection struct {
 	RedisPool *redis.Pool
