@@ -3,8 +3,9 @@ module github.com/matg94/go-url-shortener
 go 1.17
 
 require (
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
-	github.com/gomodule/redigo v1.8.8
+	github.com/gomodule/redigo v1.8.9
 	gopkg.in/yaml.v2 v2.4.0
 )
 

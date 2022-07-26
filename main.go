@@ -5,7 +5,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/matg94/go-url-shortener/config"
+	"github.com/matg94/go-url-shortener/controllers"
+	"github.com/matg94/go-url-shortener/models"
+	"github.com/matg94/go-url-shortener/redis"
+	"github.com/matg94/go-url-shortener/repos"
 )
 
 func LoadConfig(profile string) *config.AppConfig {
@@ -26,5 +32,18 @@ func main() {
 	}
 	profile := os.Args[1]
 	appConfig := LoadConfig(profile)
-	fmt.Println(appConfig)
+	controllers.AppConfig = *appConfig
+	redisMock := &redis.RedisConnectionMock{}
+	returnedUrl := models.URL{
+		LongURL: "Hello!",
+		Hits:    3,
+	}
+	returnedString, _ := returnedUrl.ToJSON()
+	redisMock.ReturnValue = returnedString
+	controllers.URLRepo = repos.CreateURLRepo(redisMock)
+
+	server := gin.Default()
+	server.Use(cors.Default())
+	initializeRoutes(server)
+	server.Run()
 }

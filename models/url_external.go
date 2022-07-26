@@ -14,8 +14,14 @@ type URLElongateResponse struct {
 	URL string `json:"url"`
 }
 
-func ShortenRequestFromJson(json_data string) URLShortenRequest {
+func ShortenRequestFromJson(json_data []byte) URLShortenRequest {
 	request := URLShortenRequest{}
-	json.Unmarshal([]byte(json_data), &request)
+	json.Unmarshal(json_data, &request)
+	return request
+}
+
+func LongRequestFromJson(json_data []byte) URLElongateResponse {
+	request := URLElongateResponse{}
+	json.Unmarshal(json_data, &request)
 	return request
 }

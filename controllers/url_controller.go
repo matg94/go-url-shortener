@@ -10,8 +10,8 @@ import (
 	"github.com/matg94/go-url-shortener/services"
 )
 
-var url_repo *repos.URLRepo
-var appConfig *config.AppConfig
+var URLRepo repos.URLRepoInterface
+var AppConfig config.AppConfig
 
 func HandleError(c *gin.Context, err error, code int) {
 	c.JSON(code, gin.H{
@@ -25,8 +25,8 @@ func PostShortenURL(c *gin.Context) {
 	if readError != nil {
 		HandleError(c, readError, 400)
 	}
-	request := models.ShortenRequestFromJson(string(requestBody))
-	shortened, err := services.ShortenURL(url_repo, request.URL, appConfig.HashLength)
+	request := models.ShortenRequestFromJson(requestBody)
+	shortened, err := services.ShortenURL(URLRepo, request.URL, AppConfig.HashLength)
 	if err != nil {
 		HandleError(c, err, 500)
 	}
@@ -36,11 +36,32 @@ func PostShortenURL(c *gin.Context) {
 }
 
 func GetLongURL(c *gin.Context) {
-
+	body := c.Request.Body
+	requestBody, readError := ioutil.ReadAll(body)
+	if readError != nil {
+		HandleError(c, readError, 400)
+	}
+	request := models.LongRequestFromJson(requestBody)
+	longURL, err := services.ElongateURL(URLRepo, request.URL)
+	if err != nil {
+		HandleError(c, err, 500)
+	}
+	c.JSON(200, gin.H{
+		"URL": longURL,
+	})
 }
 
 func GetURLHits(c *gin.Context) {
 
+}
+
+func ShortRedirect(c *gin.Context) {
+	shortenedURL := c.Param("url")
+	originalURL, err := services.ElongateURL(URLRepo, shortenedURL)
+	if err != nil {
+		HandleError(c, err, 400)
+	}
+	c.Redirect(302, originalURL)
 }
 
 /*

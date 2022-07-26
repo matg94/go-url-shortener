@@ -15,6 +15,12 @@ type URLRepo struct {
 	RedisConn redis.RedisConnectionInterface
 }
 
+func CreateURLRepo(redisConnection redis.RedisConnectionInterface) URLRepoInterface {
+	return &URLRepo{
+		RedisConn: redisConnection,
+	}
+}
+
 // Should this be changed to take URL model as a param?
 func (repo *URLRepo) StoreURL(shortURL, longURL string, hits uint) error {
 	url := models.URL{
