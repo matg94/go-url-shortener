@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/matg94/go-url-shortener/config"
 	"github.com/matg94/go-url-shortener/controllers"
-	"github.com/matg94/go-url-shortener/models"
 	"github.com/matg94/go-url-shortener/redis"
 	"github.com/matg94/go-url-shortener/repos"
 )
@@ -33,13 +32,7 @@ func main() {
 	profile := os.Args[1]
 	appConfig := LoadConfig(profile)
 	controllers.AppConfig = *appConfig
-	redisMock := &redis.RedisConnectionMock{}
-	returnedUrl := models.URL{
-		LongURL: "Hello!",
-		Hits:    3,
-	}
-	returnedString, _ := returnedUrl.ToJSON()
-	redisMock.ReturnValue = returnedString
+	redisMock := redis.CreateRedisCache()
 	controllers.URLRepo = repos.CreateURLRepo(redisMock)
 
 	server := gin.Default()

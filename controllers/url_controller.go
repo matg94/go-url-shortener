@@ -15,7 +15,8 @@ var AppConfig config.AppConfig
 
 func HandleError(c *gin.Context, err error, code int) {
 	c.JSON(code, gin.H{
-		"error": err.Error(),
+		"status": code,
+		"error":  err.Error(),
 	})
 }
 
@@ -24,11 +25,17 @@ func PostShortenURL(c *gin.Context) {
 	requestBody, readError := ioutil.ReadAll(body)
 	if readError != nil {
 		HandleError(c, readError, 400)
+		return
 	}
-	request := models.ShortenRequestFromJson(requestBody)
+	request, parseError := models.ShortenRequestFromJson(requestBody)
+	if parseError != nil {
+		HandleError(c, parseError, 400)
+		return
+	}
 	shortened, err := services.ShortenURL(URLRepo, request.URL, AppConfig.HashLength)
 	if err != nil {
 		HandleError(c, err, 500)
+		return
 	}
 	c.JSON(200, gin.H{
 		"URL": shortened,
@@ -40,11 +47,17 @@ func GetLongURL(c *gin.Context) {
 	requestBody, readError := ioutil.ReadAll(body)
 	if readError != nil {
 		HandleError(c, readError, 400)
+		return
 	}
-	request := models.LongRequestFromJson(requestBody)
+	request, parseError := models.LongRequestFromJson(requestBody)
+	if parseError != nil {
+		HandleError(c, parseError, 400)
+		return
+	}
 	longURL, err := services.ElongateURL(URLRepo, request.URL)
 	if err != nil {
 		HandleError(c, err, 500)
+		return
 	}
 	c.JSON(200, gin.H{
 		"URL": longURL,
@@ -52,7 +65,31 @@ func GetLongURL(c *gin.Context) {
 }
 
 func GetURLHits(c *gin.Context) {
-
+	body := c.Request.Body
+	requestBody, readError := ioutil.ReadAll(body)
+	if readError != nil {
+		HandleError(c, readError, 400)
+		return
+	}
+	request, parseError := models.LongRequestFromJson(requestBody)
+	if parseError != nil {
+		HandleError(c, parseError, 400)
+		return
+	}
+	longURL, err := services.ElongateURL(URLRepo, request.URL)
+	if err != nil {
+		HandleError(c, err, 500)
+		return
+	}
+	hits, err := services.GetURLHits(URLRepo, request.URL)
+	if err != nil {
+		HandleError(c, err, 500)
+		return
+	}
+	c.JSON(200, gin.H{
+		"URL":  longURL,
+		"Hits": hits,
+	})
 }
 
 func ShortRedirect(c *gin.Context) {
@@ -60,12 +97,7 @@ func ShortRedirect(c *gin.Context) {
 	originalURL, err := services.ElongateURL(URLRepo, shortenedURL)
 	if err != nil {
 		HandleError(c, err, 400)
+		return
 	}
 	c.Redirect(302, originalURL)
 }
-
-/*
-	POST: /shorten -> {}
-
-
-*/

@@ -34,3 +34,11 @@ func ElongateURL(URLRepo repos.URLRepoInterface, shortURL string) (string, error
 	}
 	return url.LongURL, nil
 }
+
+func GetURLHits(URLRepo repos.URLRepoInterface, shortURL string) (uint, error) {
+	url, err := URLRepo.GetURL(shortURL)
+	if err != nil {
+		return 0, err
+	}
+	return url.Hits, nil
+}

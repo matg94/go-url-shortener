@@ -1,6 +1,8 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type URLShortenRequest struct {
 	URL string `json:"url"`
@@ -14,14 +16,14 @@ type URLElongateResponse struct {
 	URL string `json:"url"`
 }
 
-func ShortenRequestFromJson(json_data []byte) URLShortenRequest {
+func ShortenRequestFromJson(json_data []byte) (URLShortenRequest, error) {
 	request := URLShortenRequest{}
-	json.Unmarshal(json_data, &request)
-	return request
+	err := json.Unmarshal(json_data, &request)
+	return request, err
 }
 
-func LongRequestFromJson(json_data []byte) URLElongateResponse {
+func LongRequestFromJson(json_data []byte) (URLElongateResponse, error) {
 	request := URLElongateResponse{}
-	json.Unmarshal(json_data, &request)
-	return request
+	err := json.Unmarshal(json_data, &request)
+	return request, err
 }
