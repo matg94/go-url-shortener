@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/matg94/go-url-shortener/models"
 	"github.com/matg94/go-url-shortener/redis"
 	"github.com/matg94/go-url-shortener/repos"
@@ -11,6 +13,7 @@ func ShortenURL(URLRepo repos.URLRepoInterface, longURL string, hashLength int) 
 	hash := util.HashString(longURL, hashLength)
 
 	_, err := URLRepo.GetURL(hash)
+	fmt.Println(err)
 	if err == redis.ErrRedisValueNotFound {
 		err := URLRepo.StoreURL(hash, longURL, 0)
 		if err != nil {

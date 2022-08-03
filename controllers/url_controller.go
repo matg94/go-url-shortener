@@ -42,7 +42,7 @@ func PostShortenURL(c *gin.Context) {
 	})
 }
 
-func GetLongURL(c *gin.Context) {
+func PostLongURL(c *gin.Context) {
 	body := c.Request.Body
 	requestBody, readError := ioutil.ReadAll(body)
 	if readError != nil {
@@ -54,7 +54,7 @@ func GetLongURL(c *gin.Context) {
 		HandleError(c, parseError, 400)
 		return
 	}
-	longURL, err := services.ElongateURL(URLRepo, request.URL)
+	longURL, err := services.ElongateURL(URLRepo, request.Hash)
 	if err != nil {
 		HandleError(c, err, 500)
 		return
@@ -65,23 +65,16 @@ func GetLongURL(c *gin.Context) {
 }
 
 func GetURLHits(c *gin.Context) {
-	body := c.Request.Body
-	requestBody, readError := ioutil.ReadAll(body)
-	if readError != nil {
-		HandleError(c, readError, 400)
-		return
+	hash := c.Param("hash")
+	request := models.URLElongateResponse{
+		Hash: hash,
 	}
-	request, parseError := models.LongRequestFromJson(requestBody)
-	if parseError != nil {
-		HandleError(c, parseError, 400)
-		return
-	}
-	longURL, err := services.ElongateURL(URLRepo, request.URL)
+	longURL, err := services.ElongateURL(URLRepo, request.Hash)
 	if err != nil {
 		HandleError(c, err, 500)
 		return
 	}
-	hits, err := services.GetURLHits(URLRepo, request.URL)
+	hits, err := services.GetURLHits(URLRepo, request.Hash)
 	if err != nil {
 		HandleError(c, err, 500)
 		return
@@ -93,7 +86,7 @@ func GetURLHits(c *gin.Context) {
 }
 
 func ShortRedirect(c *gin.Context) {
-	shortenedURL := c.Param("url")
+	shortenedURL := c.Param("hash")
 	originalURL, err := services.ElongateURL(URLRepo, shortenedURL)
 	if err != nil {
 		HandleError(c, err, 400)

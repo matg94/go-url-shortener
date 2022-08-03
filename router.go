@@ -6,8 +6,8 @@ import (
 )
 
 func initializeRoutes(serv *gin.Engine) {
-	serv.POST("/url", controllers.PostShortenURL)
-	serv.GET("/url", controllers.GetLongURL)
-	serv.GET("/hits", controllers.GetURLHits)
-	serv.GET("/:url", controllers.ShortRedirect)
+	serv.POST("/shorten", controllers.PostShortenURL)
+	serv.POST("/elong", controllers.PostLongURL)
+	serv.GET("/hits/:hash", controllers.GetURLHits)
+	serv.GET("/:hash", controllers.ShortRedirect)
 }

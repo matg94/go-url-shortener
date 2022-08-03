@@ -11,6 +11,9 @@ func CreateRedisCache() *RedisCache {
 }
 
 func (r *RedisCache) GET(key string) (string, error) {
+	if r.cache[key] == "" {
+		return "", ErrRedisValueNotFound
+	}
 	return r.cache[key], nil
 }
 

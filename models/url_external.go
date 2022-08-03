@@ -8,12 +8,8 @@ type URLShortenRequest struct {
 	URL string `json:"url"`
 }
 
-type URLShortenResponse struct {
-	Hash string `json:"url"`
-}
-
 type URLElongateResponse struct {
-	URL string `json:"url"`
+	Hash string `json:"url"`
 }
 
 func ShortenRequestFromJson(json_data []byte) (URLShortenRequest, error) {

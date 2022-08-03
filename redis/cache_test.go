@@ -17,5 +17,4 @@ func TestCacheGetSet(t *testing.T) {
 		t.Logf("expected GET to return %s but got %s", testVal, val)
 		t.Fail()
 	}
-
 }
