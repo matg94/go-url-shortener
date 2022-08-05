@@ -25,6 +25,15 @@ func LoadConfig(profile string) *config.AppConfig {
 	return appConfig
 }
 
+func setupDataPersistence(redisConfig config.RedisConfig) redis.RedisConnectionInterface {
+	if redisConfig.IsCache {
+		log.Print("Starting data persistence with CACHE")
+		return redis.CreateRedisCache()
+	}
+	log.Printf("Starting data persistence with redis at %s:%d", redisConfig.URL, redisConfig.Port)
+	return redis.CreateRedisConnectionPool(&redisConfig)
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("Application profile is required as an Arg to run")
@@ -32,11 +41,14 @@ func main() {
 	profile := os.Args[1]
 	appConfig := LoadConfig(profile)
 	controllers.AppConfig = *appConfig
-	redisMock := redis.CreateRedisCache()
-	controllers.URLRepo = repos.CreateURLRepo(redisMock)
+	dataPersistence := setupDataPersistence(appConfig.Redis)
+	controllers.URLRepo = repos.CreateURLRepo(dataPersistence)
 
 	server := gin.Default()
 	server.Use(cors.Default())
 	initializeRoutes(server)
-	server.Run()
+	err := server.Run()
+	if err != nil {
+		log.Fatalf("Failed to run server! %s", err)
+	}
 }

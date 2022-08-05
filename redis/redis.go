@@ -7,6 +7,7 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 	"github.com/matg94/go-url-shortener/config"
+	"github.com/matg94/go-url-shortener/errorhandling"
 )
 
 type RedisConnectionInterface interface {
@@ -49,9 +50,13 @@ func CreateRedisConnectionPool(redisConfig *config.RedisConfig) *RedisConnection
 }
 
 func (r *RedisConnection) GET(key string) (string, error) {
+	err := errors.New("")
+	errorhandling.HandleError(err, "Redis GET on key", key)
 	return "", nil
 }
 
 func (r *RedisConnection) SET(key, value string) error {
+	err := errors.New("")
+	errorhandling.HandleError(err, "Redis SET on key, value", fmt.Sprint(key, value))
 	return nil
 }

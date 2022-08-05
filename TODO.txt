@@ -1,4 +1,10 @@
-Add a constructor to redis_mock to better create mocks
-    switch url_repo_tests to use constructor
-Change repo store url to take a models.url object rather than fields
-Check for invalid requests
+* Change repo store url to take a models.url object rather than fields
+* Check for invalid requests
+Add tests for controller
+    integration?
+* Add config to switch between real redis and cache
+Add url_service get hits test
+Add custom errors at each level and handle them individually
+Add linting
+Setup docker
+Add Terraform deployments

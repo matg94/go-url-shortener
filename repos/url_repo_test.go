@@ -19,7 +19,10 @@ func TestStoreURL(t *testing.T) {
 		RedisConn: redisMock,
 	}
 
-	err := repo.StoreURL(shortURL, longURL, hits)
+	err := repo.StoreURL(shortURL, models.URL{
+		LongURL: longURL,
+		Hits:    hits,
+	})
 	if err != nil {
 		t.Logf("expected no errors but got %s", err)
 		t.Fail()
@@ -54,7 +57,10 @@ func TestStoreURLRedisErrorSet(t *testing.T) {
 		RedisConn: redisMock,
 	}
 
-	err := repo.StoreURL(shortURL, longURL, hits)
+	err := repo.StoreURL(shortURL, models.URL{
+		LongURL: longURL,
+		Hits:    hits,
+	})
 	if err != redisError {
 		t.Logf("expected error %s but got %s", redisError, err)
 		t.Fail()

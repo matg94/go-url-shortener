@@ -7,7 +7,11 @@ import (
 func TestCacheGetSet(t *testing.T) {
 	redisCache := CreateRedisCache()
 	testVal := "test123"
-	redisCache.SET("test", testVal)
+	err := redisCache.SET("test", testVal)
+	if err != nil {
+		t.Logf("expected no errors but got %s", err)
+		t.Fail()
+	}
 	val, err := redisCache.GET("test")
 	if err != nil {
 		t.Logf("expected no errors but got %s", err)

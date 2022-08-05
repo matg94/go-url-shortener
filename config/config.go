@@ -7,6 +7,7 @@ import (
 )
 
 type RedisConfig struct {
+	IsCache   bool   `yaml:"IsCache"`
 	MaxIdle   int    `yaml:"MaxIdle"`
 	MaxActive int    `yaml:"MaxActive"`
 	Port      int    `yaml:"Port"`

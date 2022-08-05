@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/matg94/go-url-shortener/config"
 	"github.com/matg94/go-url-shortener/models"
+	"github.com/matg94/go-url-shortener/redis"
 	"github.com/matg94/go-url-shortener/repos"
 	"github.com/matg94/go-url-shortener/services"
 )
@@ -56,6 +57,10 @@ func PostLongURL(c *gin.Context) {
 	}
 	longURL, err := services.ElongateURL(URLRepo, request.Hash)
 	if err != nil {
+		if err == redis.ErrRedisValueNotFound {
+			HandleError(c, err, 404)
+			return
+		}
 		HandleError(c, err, 500)
 		return
 	}

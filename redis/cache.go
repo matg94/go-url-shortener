@@ -1,5 +1,7 @@
 package redis
 
+import "github.com/matg94/go-url-shortener/errorhandling"
+
 type RedisCache struct {
 	cache map[string]string
 }
@@ -12,6 +14,7 @@ func CreateRedisCache() *RedisCache {
 
 func (r *RedisCache) GET(key string) (string, error) {
 	if r.cache[key] == "" {
+		errorhandling.HandleError(ErrRedisValueNotFound, "Cache GET", key)
 		return "", ErrRedisValueNotFound
 	}
 	return r.cache[key], nil

@@ -6,7 +6,7 @@ import (
 )
 
 type URLRepoInterface interface {
-	StoreURL(shortURL, longURL string, hits uint) error
+	StoreURL(shortURL string, newURL models.URL) error
 	GetURL(shortURL string) (models.URL, error)
 	IncrementHits(shortURL string) error
 }
@@ -22,10 +22,10 @@ func CreateURLRepo(redisConnection redis.RedisConnectionInterface) URLRepoInterf
 }
 
 // Should this be changed to take URL model as a param?
-func (repo *URLRepo) StoreURL(shortURL, longURL string, hits uint) error {
+func (repo *URLRepo) StoreURL(shortURL string, newURL models.URL) error {
 	url := models.URL{
-		LongURL: longURL,
-		Hits:    hits,
+		LongURL: newURL.LongURL,
+		Hits:    newURL.Hits,
 	}
 	url_json, err := url.ToJSON()
 	if err != nil {
@@ -48,7 +48,8 @@ func (repo *URLRepo) IncrementHits(shortURL string) error {
 	if err != nil {
 		return err
 	}
-	err = repo.StoreURL(shortURL, url.LongURL, url.Hits+1)
+	url.Hits += 1
+	err = repo.StoreURL(shortURL, url)
 	if err != nil {
 		return err
 	}
