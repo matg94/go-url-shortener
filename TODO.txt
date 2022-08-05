@@ -1,10 +1,11 @@
 * Change repo store url to take a models.url object rather than fields
 * Check for invalid requests
-Add tests for controller
-    integration?
 * Add config to switch between real redis and cache
-Add url_service get hits test
-Add custom errors at each level and handle them individually
+* Add url_service get hits test
+* Add custom errors at each level and handle them individually
 Add linting
 Setup docker
+Setup CI/CD
+Write integration tests
+    Add tests for controller
 Add Terraform deployments

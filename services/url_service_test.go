@@ -173,3 +173,50 @@ func TestElongateURLRedisErrorSet(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestGetURLHits(t *testing.T) {
+	shortURL := "test"
+	longURL := &models.URL{
+		LongURL: "test-long",
+		Hits:    1,
+	}
+	url, _ := longURL.ToJSON()
+	redisError := fmt.Errorf("fail")
+	redisMock := redis.CreateRedisMock(nil, redisError, url)
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	hits, err := GetURLHits(url_repo, shortURL)
+
+	if err != nil {
+		t.Log("expected no errors but got", err)
+		t.Fail()
+	}
+
+	if hits != 1 {
+		t.Log("expected hits to be 1 but got", hits)
+		t.Fail()
+	}
+}
+
+func TestGetURLHitsRedisErrorGet(t *testing.T) {
+	shortURL := "test"
+	redisError := fmt.Errorf("fail")
+	redisMock := redis.CreateRedisMock(redisError, nil, "")
+	url_repo := &repos.URLRepo{
+		RedisConn: redisMock,
+	}
+
+	hits, err := GetURLHits(url_repo, shortURL)
+
+	if err != redisError {
+		t.Log("expected error to be 'fail' but got", err)
+		t.Fail()
+	}
+
+	if hits != 0 {
+		t.Log("expected hits to be 0 but got", hits)
+		t.Fail()
+	}
+}
