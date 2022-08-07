@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"io/ioutil"
+	"log"
 
 	"gopkg.in/yaml.v2"
 )
@@ -20,6 +22,18 @@ type AppConfig struct {
 	BaseUrl    string      `yaml:"base_url"`
 	HashLength int         `yaml:"hash_length"`
 	Redis      RedisConfig `yaml:"redis"`
+}
+
+func LoadConfig(profile string) *AppConfig {
+	data, err := ReadConfigFile(fmt.Sprintf("../config/%s.yaml", profile))
+	if err != nil {
+		log.Fatalf("Could not read config file for profile: %s", profile)
+	}
+	appConfig, err := ParseYamlConfig(data)
+	if err != nil {
+		log.Fatalf("Could not parse config for profile: %s", profile)
+	}
+	return appConfig
 }
 
 func ReadConfigFile(filepath string) ([]byte, error) {

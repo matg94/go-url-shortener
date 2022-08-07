@@ -74,18 +74,17 @@ func GetURLHits(c *gin.Context) {
 	request := models.URLElongateResponse{
 		Hash: hash,
 	}
-	longURL, err := services.ElongateURL(URLRepo, request.Hash)
-	if err != nil {
-		HandleError(c, err, 500)
-		return
-	}
 	hits, err := services.GetURLHits(URLRepo, request.Hash)
 	if err != nil {
+		if err == redis.ErrRedisValueNotFound {
+			HandleError(c, err, 404)
+			return
+		}
 		HandleError(c, err, 500)
 		return
 	}
 	c.JSON(200, gin.H{
-		"URL":  longURL,
+		"URL":  hash,
 		"Hits": hits,
 	})
 }
@@ -94,7 +93,11 @@ func ShortRedirect(c *gin.Context) {
 	shortenedURL := c.Param("hash")
 	originalURL, err := services.ElongateURL(URLRepo, shortenedURL)
 	if err != nil {
-		HandleError(c, err, 400)
+		if err == redis.ErrRedisValueNotFound {
+			HandleError(c, err, 404)
+			return
+		}
+		HandleError(c, err, 500)
 		return
 	}
 	c.Redirect(302, originalURL)
