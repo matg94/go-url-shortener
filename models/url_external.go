@@ -15,6 +15,8 @@ type URLElongateResponse struct {
 	Hash string `json:"url"`
 }
 
+var ErrUrlNotDefined error = errors.New("URL not defined in request")
+
 func ShortenRequestFromJson(json_data []byte) (URLShortenRequest, error) {
 	request := URLShortenRequest{}
 	err := json.Unmarshal(json_data, &request)
@@ -22,9 +24,9 @@ func ShortenRequestFromJson(json_data []byte) (URLShortenRequest, error) {
 		errorhandling.HandleError(err, "Shorten request parsing", string(json_data))
 		return request, err
 	}
-	if request.URL == "" { // TODO: Add proper errors
-		errorhandling.HandleError(errors.New("URL not defined in request"), "Shorten request parsing", request.URL)
-		return request, errors.New("URL not defined in request")
+	if request.URL == "" {
+		errorhandling.HandleError(ErrUrlNotDefined, "Shorten request parsing", request.URL)
+		return request, ErrUrlNotDefined
 	}
 	return request, err
 }
@@ -37,8 +39,8 @@ func LongRequestFromJson(json_data []byte) (URLElongateResponse, error) {
 		return request, err
 	}
 	if request.Hash == "" { // TODO: Add proper errors
-		errorhandling.HandleError(errors.New("URL not defined in request"), "Elongate request parsing", request.Hash)
-		return request, errors.New("URL not defined in request")
+		errorhandling.HandleError(ErrUrlNotDefined, "Elongate request parsing", request.Hash)
+		return request, ErrUrlNotDefined
 	}
 	return request, err
 }

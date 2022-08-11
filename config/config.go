@@ -25,7 +25,7 @@ type AppConfig struct {
 }
 
 func LoadConfig(profile string) *AppConfig {
-	data, err := ReadConfigFile(fmt.Sprintf("../config/%s.yaml", profile))
+	data, err := ReadConfigFile(fmt.Sprintf("./config/%s.yaml", profile))
 	if err != nil {
 		log.Fatalf("Could not read config file for profile: %s", profile)
 	}

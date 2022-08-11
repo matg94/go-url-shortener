@@ -50,13 +50,28 @@ func CreateRedisConnectionPool(redisConfig *config.RedisConfig) *RedisConnection
 }
 
 func (r *RedisConnection) GET(key string) (string, error) {
-	err := errors.New("")
-	errorhandling.HandleError(err, "Redis GET on key", key)
-	return "", nil
+	conn := r.RedisPool.Get()
+	val, err := conn.Do("GET", key)
+	defer conn.Close()
+
+	if err != nil {
+		errorhandling.HandleError(err, "Redis GET on key", key)
+		return "", err
+	}
+	if val == "" {
+		return "", ErrRedisValueNotFound
+	}
+	return fmt.Sprint(val), nil
 }
 
 func (r *RedisConnection) SET(key, value string) error {
-	err := errors.New("")
-	errorhandling.HandleError(err, "Redis SET on key, value", fmt.Sprint(key, value))
+	conn := r.RedisPool.Get()
+	_, err := conn.Do("SET", key, value)
+	defer conn.Close()
+
+	if err != nil {
+		errorhandling.HandleError(err, "Redis SET on key, value", fmt.Sprint(key, value))
+		return err
+	}
 	return nil
 }

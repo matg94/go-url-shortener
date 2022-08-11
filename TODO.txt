@@ -3,9 +3,10 @@
 * Add config to switch between real redis and cache
 * Add url_service get hits test
 * Add custom errors at each level and handle them individually
+* Controller tests
+* models tests
+Setup proper logging
+Setup CI/CD
 Add linting
 Setup docker
-Setup CI/CD
-Write integration tests
-    Add tests for controller
 Add Terraform deployments
