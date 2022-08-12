@@ -5,8 +5,9 @@
 * Add custom errors at each level and handle them individually
 * Controller tests
 * models tests
+* Fix pathing for config not working for go run and tests
+* Setup docker
 Setup proper logging
 Setup CI/CD
 Add linting
-Setup docker
 Add Terraform deployments

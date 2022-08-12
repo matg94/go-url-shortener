@@ -13,10 +13,7 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("Application profile is required as an Arg to run")
-	}
-	profile := os.Args[1]
+	profile := os.Getenv("APP_CONFIG_PROFILE")
 	appConfig := config.LoadConfig(profile)
 	controllers.AppConfig = *appConfig
 	dataPersistence := redis.SetupDataPersistence(appConfig.Redis)
